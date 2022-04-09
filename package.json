@@ -11,7 +11,7 @@
     "dependencies": {
         "es6-shim": "^0.35.5",
         "ics-to-json": "file:../ics-to-json",
-        "moment": "^2.24.0",
+        "moment": "^2.29.2",
         "node-fetch": "^2.6.0",
         "tsconfig-paths": "^3.9.0",
         "xml": "^1.0.1",
