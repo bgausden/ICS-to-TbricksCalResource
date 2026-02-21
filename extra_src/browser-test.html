@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ICS to Tbricks Browser Test</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 980px; margin: 2rem auto; padding: 0 1rem; }
+      .row { margin: 0.75rem 0; }
+      textarea { width: 100%; min-height: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      pre { white-space: pre-wrap; word-break: break-word; background: #f6f8fa; padding: 1rem; border-radius: 6px; }
+      button { margin-right: 0.5rem; }
+      .error { color: #b00020; }
+    </style>
+  </head>
+  <body>
+    <h1>ICS to Tbricks Browser Entrypoint Test</h1>
+    <p>Use either uploaded ICS file or pasted ICS text. This does not fetch remote URLs.</p>
+
+    <div class="row">
+      <label>
+        Country code:
+        <input id="countryCode" value="HK" maxlength="8" />
+      </label>
+    </div>
+
+    <div class="row">
+      <label>
+        ICS file:
+        <input id="icsFile" type="file" accept=".ics,text/calendar" />
+      </label>
+      <button id="convertFileBtn" type="button">Convert file</button>
+    </div>
+
+    <div class="row">
+      <label for="icsText">ICS text:</label>
+      <textarea id="icsText" placeholder="Paste ICS content here"></textarea>
+      <button id="convertTextBtn" type="button">Convert text</button>
+    </div>
+
+    <div class="row">
+      <button id="downloadBtn" type="button" disabled>Download XML</button>
+      <span id="status"></span>
+    </div>
+
+    <h2>XML output</h2>
+    <pre id="output"></pre>
+
+    <script>
+      window.addEventListener("error", event => {
+        const statusEl = document.getElementById("status");
+        if (statusEl) {
+          statusEl.textContent = event.message;
+          statusEl.className = "error";
+        }
+      });
+    </script>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "ics-to-json": "https://esm.sh/ics-to-json@2.0.0",
+          "xml-js": "https://esm.sh/xml-js@1.6.11"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { DEFAULT_COUNTRY_CODE, calResourceFromIcs, calResourceFromIcsFile } from "../dist/browser.js";
+
+      const countryCodeInput = document.getElementById("countryCode");
+      const icsFileInput = document.getElementById("icsFile");
+      const icsTextInput = document.getElementById("icsText");
+      const statusEl = document.getElementById("status");
+      const outputEl = document.getElementById("output");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const convertTextBtn = document.getElementById("convertTextBtn");
+      const convertFileBtn = document.getElementById("convertFileBtn");
+
+      countryCodeInput.value = DEFAULT_COUNTRY_CODE;
+
+      let latestXml = "";
+
+      function setStatus(message, isError = false) {
+        statusEl.textContent = message;
+        statusEl.className = isError ? "error" : "";
+      }
+
+      function renderResult(xml) {
+        latestXml = xml;
+        outputEl.textContent = xml;
+        downloadBtn.disabled = false;
+        setStatus("Conversion succeeded.");
+      }
+
+      function getCountryCode() {
+        const value = countryCodeInput.value.trim();
+        return value.length > 0 ? value : DEFAULT_COUNTRY_CODE;
+      }
+
+      convertTextBtn.addEventListener("click", () => {
+        try {
+          const icsText = icsTextInput.value;
+          if (!icsText.trim()) {
+            throw new Error("Paste ICS text first.");
+          }
+          const xml = calResourceFromIcs(icsText, getCountryCode());
+          renderResult(xml);
+        } catch (error) {
+          setStatus(error instanceof Error ? error.message : String(error), true);
+        }
+      });
+
+      convertFileBtn.addEventListener("click", async () => {
+        try {
+          const file = icsFileInput.files?.[0];
+          if (!file) {
+            throw new Error("Choose an ICS file first.");
+          }
+          const xml = await calResourceFromIcsFile(file, getCountryCode());
+          renderResult(xml);
+        } catch (error) {
+          setStatus(error instanceof Error ? error.message : String(error), true);
+        }
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        const blob = new Blob([latestXml], { type: "application/xml" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = "calendar.xml";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(url);
+      });
+    </script>
+  </body>
+</html>
