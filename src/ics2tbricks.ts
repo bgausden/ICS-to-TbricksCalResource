@@ -3,7 +3,7 @@ import { icsToJson } from "ics-to-json"
 import { json2xml } from "xml-js"
 
 export const DEFAULT_COUNTRY_CODE = "HK"
-export const DEFAULT_CALENDAR_URL = "https://www.hkex.com.hk/News/HKEX-Calendar/Subscribe-CalendarS"
+export const DEFAULT_CALENDAR_URL = "https://www.hkex.com.hk/News/HKEX-Calendar/Subscribe-Calendar?sc_lang=en"
 
 const HONG_KONG_CLOSED = "Hong Kong Market is closed"
 const RESOURCE_TYPE = "application/x-calendar+xml"
