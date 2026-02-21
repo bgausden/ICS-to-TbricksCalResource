@@ -34,7 +34,8 @@
         "clean": "rm -rf dist",
         "build": "npm run clean && tsc -p tsconfig.json",
         "start": "node dist/ics2tbricks.js",
-        "typecheck": "tsc -p tsconfig.json --noEmit"
+        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "test:e2e": "npm run build && node --test tests/e2e-calendar.test.mjs"
     },
     "repository": {
         "type": "git",
