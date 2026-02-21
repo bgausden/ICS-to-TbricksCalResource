@@ -53,6 +53,25 @@ npm start -- "https://example.com/calendar.ics" "SE" > calendar.xml
 - Argument 2: country code used in `<resource name="...">`
 - Failure exits with non-zero code and prints an error message.
 
+## Browser Usage (User-Provided ICS)
+
+To avoid CORS issues, let the user paste ICS text or upload an `.ics` file in the browser.
+
+Use the browser entrypoint:
+
+```ts
+import { calResourceFromIcs, calResourceFromIcsFile } from "ics-to-tbcalresource/browser"
+
+const xmlFromText = calResourceFromIcs(icsText, "HK")
+const xmlFromFile = await calResourceFromIcsFile(fileInput.files[0], "HK")
+```
+
+Notes:
+
+- `calResourceFromIcs(icsText, countryCode?)` is synchronous.
+- `calResourceFromIcsFile(file, countryCode?)` reads file text and converts it.
+- The browser entry does not fetch remote URLs.
+
 ## Developer Documentation
 
 See [docs/DEVELOPERS.md](docs/DEVELOPERS.md) for project layout, architecture, and workflows.

@@ -26,7 +26,9 @@ npm audit
 
 ## Entry Points
 
-- Source: `src/ics2tbricks.ts`
+- Core source: `src/core.ts`
+- Node source: `src/ics2tbricks.ts`
+- Browser source: `src/browser.ts`
 - Build output: `dist/ics2tbricks.js`
 
 ## Public API Surface
@@ -37,6 +39,7 @@ Treat these exports as intentional API:
 - `DEFAULT_CALENDAR_URL`
 - `calResourceFromIcs(icsData, countryCode?)`
 - `calResourceFromURL(url?, countryCode?)`
+- `calResourceFromIcsFile(file, countryCode?)`
 
 If renaming/removing, update docs and provide migration notes.
 

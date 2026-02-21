@@ -21,7 +21,9 @@ Current design priorities:
 
 ## Repository Layout
 
-- `src/ics2tbricks.ts`: core conversion logic and CLI entry
+- `src/core.ts`: runtime-agnostic conversion logic (Node + browser)
+- `src/ics2tbricks.ts`: Node CLI entrypoint and Node-facing exports
+- `src/browser.ts`: browser-facing helpers for user-provided ICS text/files
 - `src/@types/ics-to-json/index.d.ts`: local typing shim for parser API
 - `extra_src/`: sample input/output assets
 - `dist/`: build output (generated)
@@ -55,7 +57,7 @@ Current design priorities:
 
 ## Architecture Notes
 
-The converter pipeline in `src/ics2tbricks.ts` is:
+The converter pipeline in `src/core.ts` is:
 
 1. Fetch ICS text (`calResourceFromURL`)
 2. Parse events (`icsToJson`)
@@ -65,6 +67,11 @@ The converter pipeline in `src/ics2tbricks.ts` is:
 6. Serialize to XML (`json2xml`)
 
 The core pure function is `calResourceFromIcs(icsData, countryCode)`, which is preferred for unit testing and reuse.
+
+Browser integration should use user-supplied ICS content and call:
+
+- `calResourceFromIcs(icsText, countryCode?)`
+- `calResourceFromIcsFile(file, countryCode?)`
 
 ## Dependency Policy
 

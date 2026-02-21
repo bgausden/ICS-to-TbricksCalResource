@@ -4,6 +4,20 @@
     "description": "Simple utility for converting a trading/settlement calendar in ICS form to the equivalent Tbricks calendar resource (in XML format).",
     "private": true,
     "main": "dist/ics2tbricks.js",
+    "exports": {
+        ".": {
+            "import": "./dist/ics2tbricks.js",
+            "default": "./dist/ics2tbricks.js"
+        },
+        "./core": {
+            "import": "./dist/core.js",
+            "default": "./dist/core.js"
+        },
+        "./browser": {
+            "import": "./dist/browser.js",
+            "default": "./dist/browser.js"
+        }
+    },
     "type": "module",
     "engines": {
         "node": ">=20.0.0"
