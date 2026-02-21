@@ -3,14 +3,15 @@ var HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
     mode: "development",
-    entry: "./src/index.ts",
+    target: "node",
+    entry: "./src/ics2tbricks.ts",
     // devtool: "inline-source-map",
     plugins: [
         new HtmlWebpackPlugin({
             // Required
             inject: false,
             // template: require("html-webpack-template"),
-            template: "./src/index.ejs",
+            template: "./extra_src/index.ejs",
         }),
     ],
     module: {
