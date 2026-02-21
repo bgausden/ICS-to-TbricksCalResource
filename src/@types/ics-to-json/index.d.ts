@@ -1,3 +1,11 @@
 declare module "ics-to-json" {
-    export default function icsToJson(icsData: string): Array<Record<string, unknown>>
+    export interface IcsItem {
+        startDate?: string
+        endDate?: string
+        summary?: string
+        description?: string
+        [key: string]: unknown
+    }
+
+    export function icsToJson(icsData: string): IcsItem[]
 }

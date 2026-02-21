@@ -3,46 +3,24 @@
     "version": "1.0.0",
     "description": "Simple utility for converting a trading/settlement calendar in ICS form to the equivalent Tbricks calendar resource (in XML format).",
     "private": true,
-    "main": "ics2tbricks.js",
+    "main": "dist/ics2tbricks.js",
     "type": "module",
     "engines": {
-        "node": ">=8.10.0"
+        "node": ">=20.0.0"
     },
     "dependencies": {
-        "es6-shim": "^0.35.5",
-        "ics-to-json": "github:cwlsn/ics-to-json",
-        "moment": "^2.24.0",
-        "node-fetch": "^2.6.0",
-        "tsconfig-paths": "^3.9.0",
-        "xml": "^1.0.1",
-        "xml-js": "^1.6.11",
-        "xmlcreate": "^2.0.1"
+        "ics-to-json": "^2.0.0",
+        "xml-js": "^1.6.11"
     },
     "devDependencies": {
-        "@types/bluebird": "3.5.22",
-        "@types/lodash": "^4.14.149",
-        "@types/moment": "^2.13.0",
-        "@types/node-fetch": "^2.5.4",
-        "@types/prettyjson": "^0.0.28",
-        "@types/xml": "^1.0.4",
-        "acorn": "^7.1.0",
-        "acorn-jsx": "^5.1.0",
-        "html-webpack-plugin": "^5.6.6",
-        "html-webpack-template": "^2.5.2",
-        "lodash": "^4.17.15",
-        "prettier": "^1.19.1",
-        "prettyjson": "^1.2.1",
-        "ts-loader": "^6.2.1",
-        "ts-node": "^8.6.1",
-        "typescript": "^3.7.4",
-        "webpack": "^5.105.2",
-        "webpack-cli": "^6.0.1"
+        "@types/node": "^24.5.2",
+        "typescript": "^5.9.3"
     },
     "scripts": {
-        "test": "test",
-        "convert": "xml-js extra_src/sample_calendar.xml --spaces 4",
-        "postinstall": "npm --prefix node_modules/ics-to-json install --no-audit --no-fund && npm --prefix node_modules/ics-to-json run build",
-        "build": "webpack --config webpack.config.cjs"
+        "clean": "rm -rf dist",
+        "build": "npm run clean && tsc -p tsconfig.json",
+        "start": "node dist/ics2tbricks.js",
+        "typecheck": "tsc -p tsconfig.json --noEmit"
     },
     "repository": {
         "type": "git",
