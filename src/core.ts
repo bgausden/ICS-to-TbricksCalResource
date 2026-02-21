@@ -1,4 +1,3 @@
-import { icsToJson } from "ics-to-json"
 import { json2xml } from "xml-js"
 
 export const DEFAULT_COUNTRY_CODE = "HK"
@@ -11,7 +10,87 @@ type YesNo = "yes" | "no"
 
 interface CalendarItem {
     startDate?: string
+    endDate?: string
+    summary?: string
     description?: string
+}
+
+function unfoldIcsLines(icsData: string): string[] {
+    const rawLines = icsData.replace(/\r\n/g, "\n").split("\n")
+    const unfolded: string[] = []
+
+    for (const line of rawLines) {
+        if ((line.startsWith(" ") || line.startsWith("\t")) && unfolded.length > 0) {
+            unfolded[unfolded.length - 1] += line.slice(1)
+            continue
+        }
+        unfolded.push(line)
+    }
+
+    return unfolded
+}
+
+function unescapeIcsText(value: string): string {
+    return value
+        .replace(/\\n/gi, "\n")
+        .replace(/\\,/g, ",")
+        .replace(/\\;/g, ";")
+        .replace(/\\\\/g, "\\")
+}
+
+function parseIcsEvents(icsData: string): CalendarItem[] {
+    const lines = unfoldIcsLines(icsData)
+    const events: CalendarItem[] = []
+
+    let currentEvent: CalendarItem | null = null
+    for (const line of lines) {
+        if (line === "BEGIN:VEVENT") {
+            currentEvent = {}
+            continue
+        }
+
+        if (line === "END:VEVENT") {
+            if (currentEvent !== null) {
+                events.push(currentEvent)
+            }
+            currentEvent = null
+            continue
+        }
+
+        if (currentEvent === null) {
+            continue
+        }
+
+        const separatorIndex = line.indexOf(":")
+        if (separatorIndex === -1) {
+            continue
+        }
+
+        const propertyNamePart = line.slice(0, separatorIndex).split(";")[0] ?? ""
+        const propertyName = propertyNamePart.toUpperCase()
+        const propertyValue = unescapeIcsText(line.slice(separatorIndex + 1))
+
+        if (propertyName === "DTSTART") {
+            currentEvent.startDate = propertyValue
+            continue
+        }
+
+        if (propertyName === "DTEND") {
+            currentEvent.endDate = propertyValue
+            continue
+        }
+
+        if (propertyName === "SUMMARY") {
+            currentEvent.summary = propertyValue
+            continue
+        }
+
+        if (propertyName === "DESCRIPTION") {
+            currentEvent.description = propertyValue
+        }
+    }
+
+    return events
 }
 
 interface DayElement {
@@ -101,7 +180,7 @@ function buildDaysElements(daysByYear: Map<number, DayElement[]>): DaysElement[]
 }
 
 export function calResourceFromIcs(icsData: string, countryCode = DEFAULT_COUNTRY_CODE): string {
-    const parsedItems = icsToJson(icsData) as CalendarItem[]
+    const parsedItems = parseIcsEvents(icsData)
     const daysByYear = extractDaysByYear(parsedItems)
     const daysElements = buildDaysElements(daysByYear)
 

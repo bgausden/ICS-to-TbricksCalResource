@@ -16,7 +16,7 @@ Current design priorities:
 - Runtime: Node.js 20+
 - Language: TypeScript 5
 - Module system: ESM (`type: module`, `NodeNext`)
-- ICS parser: `ics-to-json`
+- ICS parser: internal lightweight parser in `src/core.ts`
 - XML conversion: `xml-js`
 
 ## Repository Layout
@@ -24,7 +24,6 @@ Current design priorities:
 - `src/core.ts`: runtime-agnostic conversion logic (Node + browser)
 - `src/ics2tbricks.ts`: Node CLI entrypoint and Node-facing exports
 - `src/browser.ts`: browser-facing helpers for user-provided ICS text/files
-- `src/@types/ics-to-json/index.d.ts`: local typing shim for parser API
 - `extra_src/`: sample input/output assets
 - `dist/`: build output (generated)
 - `.github/workflows/ci.yml`: CI pipeline
@@ -60,7 +59,7 @@ Current design priorities:
 The converter pipeline in `src/core.ts` is:
 
 1. Fetch ICS text (`calResourceFromURL`)
-2. Parse events (`icsToJson`)
+2. Parse VEVENT items (internal parser)
 3. Filter relevant closures (`description === "Hong Kong Market is closed"`)
 4. Group closures by year
 5. Produce `xml-js` JSON shape

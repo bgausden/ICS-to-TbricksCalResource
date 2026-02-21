@@ -23,7 +23,6 @@
         "node": ">=20.0.0"
     },
     "dependencies": {
-        "ics-to-json": "^2.0.0",
         "xml-js": "^1.6.11"
     },
     "devDependencies": {
